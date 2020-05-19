@@ -17,9 +17,11 @@ import sys
 spark = SparkSession.builder.appName("angle between the hands on a clock").getOrCreate()
 
 #location for file to read
-file_input_path = sys.argv[1]
-file_output_path = sys.argv[2]
-print ("The File Path is " + sys.argv[1])
+# =============================================================================
+# file_input_path = sys.argv[1]
+# file_output_path = sys.argv[2]
+# print ("The File Path is " + sys.argv[1])
+# =============================================================================
 
 #Creating schema for the File. ( Expecting only one column with "Time" Value 3:20) 
 base_schema = StructType([ StructField("Time",StringType(),True)
@@ -27,7 +29,7 @@ base_schema = StructType([ StructField("Time",StringType(),True)
 
 #Reading data from File
 raw_data = spark.read.schema(base_schema).format("csv").option("header","true")\
-          .option("inferSchema", "false").load(file_input_path)\
+          .option("inferSchema", "false").load("gs://prashant592/Clock_Exe/Input/clock_data.txt")\
 
 
 # =============================================================================
@@ -56,6 +58,6 @@ angle_Cal = raw_data.select("Time",split(col("Time"), ":").alias("array_col"))\
 
 #writting data into file
 angle_Cal.write.format("csv").mode("overwrite").option("sep", "\t").option("header","true")\
-.save(file_output_path)   #"D:/PRASHANT/Study/Spark/Dataflair/Codes/Clock/clock_data_output.txt"
+.save("gs://prashant592/Clock_Exe/Output/")   #"D:/PRASHANT/Study/Spark/Dataflair/Codes/Clock/clock_data_output.txt"
 
 
